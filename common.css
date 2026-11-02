@@ -1,7 +1,3 @@
-/* ==========================================================
-   BC Music Downloader — 元サイトの common.css の見た目に寄せたデザイン
-   色・サイズは下の :root(ライト)と body.dark(ダーク)の変数で変えられます
-   ========================================================== */
 :root {
   --bg: #f5f5f5;
   --card-bg: #ffffff;
@@ -100,7 +96,6 @@ p:last-child { margin-bottom: 0; }
   font-size: 0.9rem;
 }
 
-/* ===== タブ・絞り込みボタン (元サイトの .simple-btn / .loop-label の見た目) ===== */
 .tab-row {
   display: flex;
   gap: 8px;
@@ -158,7 +153,6 @@ p:last-child { margin-bottom: 0; }
 .text-btn { padding: 8px 16px; font-size: 0.9rem; white-space: nowrap; }
 .text-btn.danger { color: var(--danger); }
 
-/* ===== 検索欄・プルダウン (元サイトの大きな検索欄) ===== */
 .search-input, .cat-select {
   display: block;
   width: 100%;
@@ -190,7 +184,6 @@ p:last-child { margin-bottom: 0; }
   cursor: pointer;
 }
 
-/* ===== 曲の一覧 (元サイトの表のような罫線・縞模様) ===== */
 .track-list {
   list-style: none;
   margin: 0;
@@ -235,7 +228,6 @@ p:last-child { margin-bottom: 0; }
 .track-group .n { margin-left: 6px; font-weight: normal; color: var(--sub-text); }
 .track-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
-/* ===== 各曲のボタン (灰色の角丸ボタン。再生だけ青い文字) ===== */
 .icon-btn {
   position: relative;
   width: 40px;
@@ -293,7 +285,6 @@ p:last-child { margin-bottom: 0; }
 .loop-btn:hover { background: var(--btn-hover); }
 .loop-btn.on { color: var(--accent); border-color: var(--accent); background: var(--highlight-bg); }
 
-/* ===== 共有された一覧・その他のアプリ・保存済み ===== */
 .shared-box {
   margin: 0 0 22px;
   padding: 4px 14px 14px;
@@ -369,7 +360,6 @@ p:last-child { margin-bottom: 0; }
 .credit a { color: var(--accent); }
 .footer-text { margin: 28px 0 0; font-size: 0.7rem; line-height: 1.7; text-align: center; color: var(--sub-text); }
 
-/* ===== 下部プレイヤー (元サイトと同じ: 曲名 → シークバー → ボタン) ===== */
 #player {
   position: fixed;
   left: 0; right: 0; bottom: 0;
@@ -432,7 +422,6 @@ body.player-open #player { transform: translateY(0); }
   line-height: 14px;
 }
 
-/* ===== 通知 ===== */
 #toast {
   position: fixed;
   left: 50%;
@@ -467,7 +456,6 @@ body.player-open #toast { bottom: 170px; }
   cursor: pointer;
 }
 
-/* ===== ダークモード切替 ===== */
 #fixed-bottom-left {
   position: fixed;
   left: 14px;
@@ -510,7 +498,6 @@ body.dark #toggle-thumb { transform: translateX(28px); background: #444; }
 body.dark .sun-container { color: #8e9499; }
 body.dark .moon-container { color: #fff; }
 
-/* ===== スマホ ===== */
 @media (max-width: 600px) {
   body { padding: 12px; }
   header.hero h1 { font-size: 1.2rem; margin: 4px 0 12px; }
