@@ -1,0 +1,19 @@
+{
+  "name": "sbcjp-music-downloader",
+  "version": "1.0.0",
+  "description": "The Battle Cats Music Downloader",
+  "type": "module",
+  "scripts": {
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "@vercel/speed-insights": "^1.0.12"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sugar2550/ogg-music-downloader.git"
+  },
+  "author": "",
+  "license": "MIT"
+}
