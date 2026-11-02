@@ -1,528 +1,533 @@
+/* ==========================================================
+   BC Music Downloader — 元サイトの common.css の見た目に寄せたデザイン
+   色・サイズは下の :root(ライト)と body.dark(ダーク)の変数で変えられます
+   ========================================================== */
+:root {
+  --bg: #f5f5f5;
+  --card-bg: #ffffff;
+  --text: #222222;
+  --sub-text: #666666;
+  --border: #cccccc;
+  --table-head: #e8e8e8;
+  --table-stripe: #fafafa;
+  --accent: #007bff;
+  --btn: #ededed;
+  --btn-hover: #d6d6d6;
+  --btn-text: #222222;
+  --input-bg: #f7f7f7;
+  --input-border: #888888;
+  --input-focus-bg: #ffffff;
+  --input-focus-border: #007bff;
+  --highlight-bg: #e5f1ff;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --player-bg: rgba(255, 255, 255, 0.8);
+  --saved-bg: #f9f9f9;
+  --saved-item-bg: #ffffff;
+  --saved-item-border: #cccccc;
+  --danger: #d93025;
+}
+body.dark {
+  --bg: #222222;
+  --card-bg: #222222;
+  --text: #ffffff;
+  --sub-text: #aaaaaa;
+  --border: #444444;
+  --table-head: #444444;
+  --table-stripe: #2a2a2a;
+  --accent: #2884ff;
+  --btn: #444444;
+  --btn-hover: #666666;
+  --btn-text: #eeeeee;
+  --input-bg: #222222;
+  --input-border: #2884ff;
+  --input-focus-bg: #222222;
+  --input-focus-border: #82b1ff;
+  --highlight-bg: #1f3350;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --player-bg: rgba(30, 30, 30, 0.8);
+  --saved-bg: #2a2a2a;
+  --saved-item-bg: #333333;
+  --saved-item-border: #555555;
+  --danger: #ff7b72;
+}
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: sans-serif;
+  margin: 0;
   padding: 20px;
-  background: #f5f5f5;
-  color: #222;
+  font-family: sans-serif, -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic";
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
   transition: background 0.3s, color 0.3s;
 }
-input[type="text"], #search {
-  padding: 5px 7px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 2px solid #ddd;
-  box-sizing: border-box;
-  background: #fff;
-  color: #222;
-  width: 90%;
-  max-width: 400px;
-  margin: 0 auto 20px;
-  display: block;
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
-}
-table {
-  border-collapse: collapse;
-  background: #fff;
-  color: #222;
+main {
+  max-width: 860px;
   margin: 0 auto;
-  width: 100%;
-  min-width: 1200px;
-  max-width: 1200px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: background 0.3s, color 0.3s;
+  padding-bottom: 60px;
 }
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: center;
-  background: #fff;
-  color: #222;
-}
-th {
-  background: #e8e8e8;
-  color: #222;
+body.player-open main { padding-bottom: 200px; }
+
+header.hero { text-align: center; }
+header.hero h1 { font-size: 1.7rem; margin: 6px 0 18px; }
+
+section { padding: 0 0 18px; }
+
+h2.sec-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 22px 0 12px;
+  font-size: 1.2rem;
   font-weight: bold;
 }
-tr:nth-child(even) td { background: #fafafa; }
-tr:nth-child(odd) td { background: #fff; }
-.simple-btn {
-  padding: 7px 18px;
+h2.sec-title .bar { display: none; }
+h2.sec-title .count { font-size: 0.8rem; font-weight: normal; color: var(--sub-text); }
+h3.sub-title { font-size: 1rem; margin: 18px 0 8px; }
+
+p { margin: 0 0 10px; font-size: 0.92rem; }
+p:last-child { margin-bottom: 0; }
+
+.lead-box {
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px var(--shadow);
+  font-size: 0.9rem;
+}
+
+/* ===== タブ・絞り込みボタン (元サイトの .simple-btn / .loop-label の見た目) ===== */
+.tab-row {
+  display: flex;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 4px;
+  padding: 10px 0;
+  background: var(--bg);
+}
+.tab-btn, .chip, .text-btn {
+  font: inherit;
+  color: var(--btn-text);
+  background: var(--btn);
+  border: 1.5px solid transparent;
   border-radius: 12px;
-  font-size: 16px;
-  color: #222;
-  background: #ededed;
-  border: none;
-  margin: 5px 5px 5px 0;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: background 0.2s, color 0.2s;
-  outline: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
-.simple-btn:hover, .simple-btn:focus {
-  background: #d6d6d6;
-  color: #111;
-}
-.loop-area {
-  margin: 18px auto 24px auto;
-  max-width: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 32px;
-}
-.loop-label {
-  font-size: 1.2em;
-  padding: 7px 16px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  border: 1.5px solid #007bff;
-  color: #007bff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  user-select: none;
-  box-shadow: 0 2px 8px rgba(0,123,255,0.08);
-}
-.song-title { text-align:left !important; 
-}
-.search-area {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  max-width: 420px;
-  margin: 0 auto 20px;
-  gap: 10px;
-}
-.search-box {
-  position: relative;
+.tab-btn:hover, .chip:hover, .text-btn:hover { background: var(--btn-hover); }
+.tab-btn:focus-visible, .chip:focus-visible, .text-btn:focus-visible,
+.icon-btn:focus-visible, .loop-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.tab-btn {
   flex: 1;
-}
-.search-box input[type="text"] {
-  width: 100%;
-  padding: 14px 16px; 
-  font-size: 18px;              
-  border-radius: 14px;
-  border: 2.5px solid #888;     
-  background: #f7f7f7;
-  color: #222;
-  box-sizing: border-box;
-  transition: border-color 0.2s, background 0.2s;
-}
-.search-box input[type="text"]:focus {
-  border-color: #007bff;
-  background: #fff;
-}
-.search-box input::placeholder {
-  color: #aaa;
-  font-size: 17px;
-}
-.table-scroll {
-  overflow-x: auto;
-  display: block;
-  -webkit-overflow-scrolling: touch;
-}
-.dark-toggle .icon.sun {
-  filter: brightness(1.2) saturate(1.2);
-}
-.dark-toggle .icon.moon {
-  filter: grayscale(0.5);
-}
-.dark-toggle.active {
-  background: #888;
-}
-.dark-toggle .icon.sun {
-  background: #fff;
-  border-radius: 50%;
-}
-.dark-toggle.active .icon.moon {
-  background: #fff;
-  border-radius: 50%;
-}
-.dark-toggle .indicator {
-  position: absolute;
-  left: 4px;
-  top: 3px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  transition: left 0.25s;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-.dark-toggle.active .indicator {
-  left: 30px;
-  background: #444;
-}
-
-body.dark-mode {
-  background: #222;
-  color: #fff;
-}
-body.dark-mode input[type="text"],
-body.dark-mode #search {
-  background: #222;
-  color: #eee;
-  border-color: #333;
-}
-body.dark-mode table {
-  border-collapse: collapse;
-  background: #222 !important;
-  color: #fff !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
-}
-body.dark-mode th, body.dark-mode td {
-  border: 1px solid #444 !important;
-  padding: 8px !important;
-  text-align: center !important;
-  background: #222 !important;
-  color: #fff !important;
-}
-body.dark-mode th {
-  background: #444 !important;
-  color: #fff !important;
-  font-weight: bold !important;
-}
-body.dark-mode tr:nth-child(even) td {
-  background: #2a2a2a !important;
-}
-body.dark-mode tr:nth-child(odd) td {
-  background: #222 !important;
-}
-body.dark-mode .loop-label {
-  background: #222;
-  border-color: #2884ff;
-  color: #2884ff;
-}
-body.dark-mode .simple-btn {
-  background: #444;
-  color: #eee;
-}
-body.dark-mode .simple-btn:hover, body.dark-mode .simple-btn:focus {
-  background: #666;
-  color: #fff;
-}
-body.dark-mode .song-title { text-align:left !important; 
-}
-
-body.dark-mode .search-box input[type="text"] {
-  background: #222;
-  color: #eee;
-  border-color: #2884ff;
-}
-body.dark-mode .search-box input[type="text"]:focus {
-  border-color: #82b1ff;
-  background: #222;
-}
-.dark-toggle {
-  position: fixed;
-  left: 18px;
-  bottom: 18px;
-  z-index: 100;
-  width: 58px;
-  height: 30px;
-  background: #bbb;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.dark-toggle .icon {
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 2px;
-  transition: filter 0.2s;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #222;
-    color: #fff;
-  }
-
-  input[type="text"],
-  #search {
-    background: #222;
-    color: #eee;
-    border-color: #333;
-  }
-
-  table {
-    border-collapse: collapse;
-    background: #222 !important;
-    color: #fff !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
-  }
-
-  th, td {
-    border: 1px solid #444 !important;
-    background: #222 !important;
-    color: #fff !important;
-  }
-
-  th {
-    background: #444 !important;
-    font-weight: bold !important;
-  }
-
-  tr:nth-child(even) td {
-    background: #2a2a2a !important;
-  }
-
-  tr:nth-child(odd) td {
-    background: #222 !important;
-  }
-
-  .loop-label {
-    background: #222;
-    border-color: #2884ff;
-    color: #2884ff;
-  }
-
-  .simple-btn {
-    background: #444;
-    color: #eee;
-  }
-
-  .simple-btn:hover, .simple-btn:focus {
-    background: #666;
-    color: #fff;
-  }
-
-  .song-title { text-align:left !important; }
-
-  .search-box input[type="text"] {
-    background: #222;
-    color: #eee;
-    border-color: #2884ff;
-  }
-
-  .search-box input[type="text"]:focus {
-    border-color: #82b1ff;
-    background: #222;
-  }
-}
-
-.playlist-controls {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.playlist-controls input[type="text"] {
-  width: auto;
-  max-width: 500px;
-  margin: 0;
-}
-
-.saved-playlists {
-  margin: 20px auto;
-  max-width: 600px;
-  padding: 15px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-.saved-playlists h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
+  padding: 10px 4px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-decoration: none;
   text-align: center;
 }
+.tab-btn.active, .chip.active {
+  background: var(--bg);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+.tab-btn .badge {
+  display: inline-block;
+  min-width: 1.5em;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  background: rgba(127, 127, 127, 0.25);
+}
+.tab-btn[hidden], .tab-panel[hidden], .other-box[hidden], .cat-select[hidden], .chip-row[hidden] { display: none; }
 
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.chip { padding: 7px 16px; font-size: 0.95rem; }
+.chip .n { margin-left: 4px; opacity: 0.7; font-size: 0.85em; }
+.kind-row .chip { font-weight: bold; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; }
+.text-btn { padding: 8px 16px; font-size: 0.9rem; white-space: nowrap; }
+.text-btn.danger { color: var(--danger); }
+
+/* ===== 検索欄・プルダウン (元サイトの大きな検索欄) ===== */
+.search-input, .cat-select {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--btn-text);
+  background: var(--input-bg);
+  border: 2.5px solid var(--input-border);
+  border-radius: 14px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.toolbar .search-input { flex: 1 1 260px; width: auto; }
+.search-input:focus, .cat-select:focus {
+  outline: none;
+  background: var(--input-focus-bg);
+  border-color: var(--input-focus-border);
+}
+.search-input::placeholder { color: #aaa; font-size: 0.95rem; }
+.cat-select {
+  max-width: 420px;
+  margin: 0 0 12px;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+/* ===== 曲の一覧 (元サイトの表のような罫線・縞模様) ===== */
+.track-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 5px var(--shadow);
+  overflow: hidden;
+}
+.track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
+.track:last-child { border-bottom: none; }
+.track:nth-child(even) { background: var(--table-stripe); }
+.track.playing {
+  background: var(--highlight-bg);
+  box-shadow: inset 4px 0 0 var(--accent);
+}
+.track-info { flex: 1; min-width: 0; text-align: left; }
+.track-title { font-size: 0.98rem; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+.track-sub {
+  font-size: 0.78rem;
+  color: var(--sub-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.track-group {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--text);
+  background: var(--table-head);
+  border-bottom: 1px solid var(--border);
+}
+.track-group .n { margin-left: 6px; font-weight: normal; color: var(--sub-text); }
+.track-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* ===== 各曲のボタン (灰色の角丸ボタン。再生だけ青い文字) ===== */
+.icon-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--btn-text);
+  background: var(--btn);
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.icon-btn:hover { background: var(--btn-hover); }
+.icon-btn svg { width: 19px; height: 19px; fill: currentColor; }
+.icon-btn.play { color: var(--accent); }
+.icon-btn.added { color: var(--accent); background: var(--highlight-bg); }
+.icon-btn:disabled { opacity: 0.35; cursor: default; }
+.icon-btn.small { width: 34px; height: 34px; }
+.icon-btn.small svg { width: 15px; height: 15px; }
+.add-btn { position: relative; }
+.add-count {
+  position: absolute;
+  right: -5px;
+  top: -6px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 17px;
+  text-align: center;
+}
+.loop-btn {
+  min-width: 46px;
+  height: 34px;
+  padding: 0 8px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: var(--btn-text);
+  background: var(--btn);
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.loop-btn:hover { background: var(--btn-hover); }
+.loop-btn.on { color: var(--accent); border-color: var(--accent); background: var(--highlight-bg); }
+
+/* ===== 共有された一覧・その他のアプリ・保存済み ===== */
+.shared-box {
+  margin: 0 0 22px;
+  padding: 4px 14px 14px;
+  background: var(--highlight-bg);
+  border: 1.5px solid var(--accent);
+  border-radius: 8px;
+}
+.empty-box {
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--sub-text);
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+}
+
+.other-box {
+  margin: 8px 0 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px var(--shadow);
+}
+.other-box > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+.other-box > summary::-webkit-details-marker { display: none; }
+.other-box > summary::before {
+  content: '▶';
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 0.65rem;
+  color: var(--sub-text);
+  transition: transform 0.2s;
+}
+.other-box[open] > summary::before { transform: rotate(90deg); }
+.other-box > summary .n { margin-left: 6px; font-weight: normal; font-size: 0.8rem; color: var(--sub-text); }
+.other-body { padding: 0 14px 14px; }
+.sub-note { margin: 0 0 10px; font-size: 0.8rem; color: var(--sub-text); }
+
+.save-row { display: flex; gap: 8px; margin: 20px 0 0; }
+.save-row .search-input { flex: 1 1 auto; width: auto; }
+.saved-playlists {
+  margin: 16px 0 0;
+  padding: 14px;
+  background: var(--saved-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.saved-playlists h3 { margin: 0 0 12px; font-size: 1rem; text-align: center; }
 .saved-playlist-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   margin-bottom: 8px;
-  background: #fff;
+  background: var(--saved-item-bg);
+  border: 1px solid var(--saved-item-border);
   border-radius: 6px;
-  border: 1px solid #ccc;
 }
+.saved-playlist-item:last-child { margin-bottom: 0; }
+.saved-playlist-name { flex: 1; min-width: 0; font-size: 0.92rem; overflow-wrap: anywhere; }
+.saved-playlist-name small { color: var(--sub-text); }
+.saved-playlist-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.saved-playlist-actions .text-btn { padding: 5px 12px; font-size: 0.85rem; }
 
-.saved-playlist-name {
-  flex: 1;
-}
+.credit { margin: 12px 0 0; font-size: 0.8rem; color: var(--sub-text); }
+.credit a { color: var(--accent); }
+.footer-text { margin: 28px 0 0; font-size: 0.7rem; line-height: 1.7; text-align: center; color: var(--sub-text); }
 
-.saved-playlist-name small {
-  color: #888;
-}
-
-.saved-playlist-actions {
-  display: flex;
-  gap: 5px;
-}
-
-.saved-playlist-actions .simple-btn {
-  padding: 4px 10px;
-  font-size: 14px;
-  margin: 0;
-}
-body.dark-mode .saved-playlists {
-  background: #2a2a2a;
-  border-color: #444;
-}
-
-body.dark-mode .saved-playlist-item {
-  background: #333;
-  border-color: #555;
-}
-
-body.dark-mode .saved-playlist-name small {
-  color: #aaa;
-}
-
-/* ダークモード自動判定対応 */
-@media (prefers-color-scheme: dark) {
-  .saved-playlists {
-    background: #2a2a2a;
-    border-color: #444;
-  }
-
-  .saved-playlist-item {
-    background: #333;
-    border-color: #555;
-  }
-
-  .saved-playlist-name small {
-    color: #aaa;
-  }
-}
-@media (max-width: 768px) {
-  h1 {
-    font-size: 18px;
-    margin-bottom: 9px;
-  }
-
-  input[type="text"], #search {
-    font-size: 14px;
-    padding: 8px 12px;
-    max-width: 100%;
-  }
-
-  .search-box input[type="text"] {
-    font-size: 14px;
-    padding: 10px 12px;
-  }
-
-  .simple-btn {
-    font-size: 13px;
-    padding: 8px 14px;
-  }
-
-  .loop-label {
-    font-size: 1.0em;
-    padding: 8px 14px;
-  }
-
-  .loop-area {
-    margin: 16px auto 16px auto;
-    gap: 20px;
-  }
-
-  .table-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    display: block;
-  }
-
-  table {
-    zoom: 0.45;
-    width: 100%;
-    margin: 0;
-  }
-}
-/* --- サイト内プレイヤーUI 改良版 --- */
-body {
-  /* プレイヤーの高さ分だけ余白を確保 */
-  padding-bottom: 130px !important; 
-}
-
-.player-container {
+/* ===== 下部プレイヤー (元サイトと同じ: 曲名 → シークバー → ボタン) ===== */
+#player {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  border-top: 1px solid #ddd;
-  padding: 12px 0;
-  box-shadow: 0 -3px 15px rgba(0,0,0,0.15);
-  z-index: 1000;
+  left: 0; right: 0; bottom: 0;
+  z-index: 950;
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom, 0px));
+  background: var(--player-bg);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(110%);
+  transition: transform 0.25s ease;
 }
-
+body.player-open #player { transform: translateY(0); }
 .player-inner {
-  max-width: 600px; /* PCでも広がりすぎず、スマホと同じような中央配置にする */
+  max-width: 600px;
   margin: 0 auto;
   padding: 0 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px; /* 縦の隙間 */
+  gap: 6px;
 }
-
-.now-playing {
-  font-size: 14px;
+.player-now { width: 100%; text-align: center; }
+.player-title {
+  font-size: 0.92rem;
   font-weight: bold;
-  text-align: center;
-  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #333;
 }
-
-.seek-wrapper {
+.player-source { font-size: 0.72rem; color: var(--sub-text); }
+.player-seek {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: var(--sub-text);
+  font-variant-numeric: tabular-nums;
+}
+.player-seek input[type=range] { flex: 1; height: 6px; cursor: pointer; accent-color: var(--accent); }
+.volume-wrap { display: flex; align-items: center; gap: 4px; }
+.volume-wrap input { width: 80px; }
+.player-controls { display: flex; justify-content: center; align-items: center; gap: 14px; width: 100%; }
+.player-controls .icon-btn { width: 50px; height: 40px; }
+.player-controls .icon-btn.small { width: 42px; height: 36px; }
+.player-controls .icon-btn.mode-on { color: var(--accent); border-color: var(--accent); background: var(--bg); }
+.repeat-one-mark {
+  position: absolute;
+  right: -3px;
+  top: -5px;
+  padding: 0 4px;
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 14px;
 }
 
-#seek-bar {
-  flex: 1;
-  height: 6px;
+/* ===== 通知 ===== */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  max-width: 92vw;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  font-size: 0.85rem;
+  border-radius: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, bottom 0.25s;
+}
+body.player-open #toast { bottom: 170px; }
+#toast.show { opacity: 1; }
+#toast.show.has-action { pointer-events: auto; }
+#toast .toast-action {
+  font: inherit;
+  font-weight: bold;
+  margin: -8px -12px -8px 12px;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  color: #8cc8ff;
   cursor: pointer;
 }
 
-.time-display {
-  font-family: monospace;
-  font-size: 12px;
-  min-width: 40px;
-  text-align: center;
-  color: #555;
+/* ===== ダークモード切替 ===== */
+#fixed-bottom-left {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 900;
+  transition: bottom 0.25s ease;
 }
-
-.playback-controls {
+body.player-open #fixed-bottom-left { bottom: 150px; }
+#dark-toggle { display: inline-flex; cursor: pointer; user-select: none; }
+#toggle-track {
+  position: relative;
+  width: 58px;
+  height: 30px;
+  padding: 0 3px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 20px; /* ボタン同士の隙間を適度に開ける */
-  width: 100%;
+  justify-content: space-between;
+  background: #bbb;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease;
 }
+#toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+  z-index: 1;
+}
+.icon-container { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; z-index: 2; transition: color 0.3s; }
+.sun-container { color: #000; }
+.moon-container { color: #5a5f64; }
+body.dark #toggle-track { background: #888; }
+body.dark #toggle-thumb { transform: translateX(28px); background: #444; }
+body.dark .sun-container { color: #8e9499; }
+body.dark .moon-container { color: #fff; }
 
-.playback-controls .simple-btn {
-  padding: 8px 20px;
-  font-size: 16px;
-  margin: 0;
+/* ===== スマホ ===== */
+@media (max-width: 600px) {
+  body { padding: 12px; }
+  header.hero h1 { font-size: 1.2rem; margin: 4px 0 12px; }
+  h2.sec-title { font-size: 1.05rem; margin: 16px 0 10px; }
+  .tab-btn { font-size: 0.88rem; padding: 9px 2px; }
+  .chip { padding: 6px 14px; font-size: 0.9rem; }
+  .track { gap: 8px; padding: 8px 10px; }
+  .track-title { font-size: 0.93rem; }
+  .icon-btn { width: 38px; height: 38px; }
+  .icon-btn.small { width: 32px; height: 32px; }
+  .track[data-src="pl"] { flex-wrap: wrap; row-gap: 6px; }
+  .track[data-src="pl"] .track-info { flex: 1 1 100%; }
+  .track[data-src="pl"] .track-actions { width: 100%; justify-content: flex-end; }
+  .volume-wrap { display: none; }
+  .save-row { flex-direction: column; }
+  .saved-playlist-item { flex-wrap: wrap; }
+  .saved-playlist-actions { width: 100%; justify-content: flex-end; }
+  .player-controls { gap: 10px; }
 }
-/* 自動判定時 (OS設定に合わせる場合) */
-@media (prefers-color-scheme: dark) {
-  .player-container {
-    background: rgba(30, 30, 30, 0.8);
-    border-top: 1px solid #444;
-  }
-  .now-playing,
-  .time-display {
-    color: #eee;
-  }
-}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

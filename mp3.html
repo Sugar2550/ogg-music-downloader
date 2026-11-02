@@ -1,44 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-<title>BC Music Downloader</title>
-<link rel="stylesheet" href="common.css">
-<link rel="icon" type="image/x-icon" href="images/favicon.ico">
-</head>
-<body>
-<button class="simple-btn" onclick="location.href='index.html'">HOME</button>
-<h1>Download MP3</h1>
-<div class="search-area">
-  <div class="search-box">
-    <input type="text" id="search" placeholder="曲名を検索..." />
-  </div>
-</div>
-<div class="loop-area">
-  <label class="loop-label">
-    <input type="checkbox" id="loopToggle"> ループ再生
-  </label>
-  <button class="simple-btn" onclick="location.href='playlist.html'">PLAYLIST</button>
-</div>
-<div id="track-list"></div>
-<div class="player-container">
-  <div class="player-inner">
-    <div class="now-playing" id="now-playing">再生中の曲：なし</div>
-    <div class="seek-wrapper">
-      <span id="current-time" class="time-display">0:00</span>
-      <input type="range" id="seek-bar" value="0" max="100" step="1">
-      <span id="duration" class="time-display">0:00</span>
-    </div>
-  </div>
-</div>
-<script src="js/music-table.js"></script>
+<html lang="ja"><head><meta charset="UTF-8"><title>BC Music Downloader</title>
 <script>
-  initMusicTable({
-    jsonUrl: "songs_mp3.json",
-    hasPlaylist: true,
-    tableContainerId: 'track-list'
-  });
+(function () {
+  var qs = new URLSearchParams(location.search);
+  qs.set('tab', 'bc'); qs.set('fmt', 'mp3');
+  location.replace('index.html?' + qs.toString());
+})();
 </script>
-</body>
-</html>
+<noscript><meta http-equiv="refresh" content="0; url=index.html"></noscript>
+</head><body><p><a href="index.html">BC Music Downloader</a> に移動しました。</p></body></html>
