@@ -34,6 +34,8 @@
   // 「/」や「http」で始まるパスは、そのまま使います
   var MUSIC_BASE = '/api/music/';
   var BC_FMTS = ['mp3', 'ogg'];
+  // ロック画面・通知に出るジャケット画像(正方形のPNGがおすすめ)
+  var ARTWORK_URL = 'images/preview.png';
   // 大戦争の分類名(tracks.json の bc の cat)の表示名と並び順
   var BC_CATS = {
     bgm: [
@@ -468,12 +470,19 @@
 
   function ensureCtx() {
     clearTimeout(sleepTimer);
-    if (actx && actx.state !== 'running' && (ctxStale || actx.state === 'interrupted' || actx.state === 'closed')) {
+    // 再生中の AudioContext は作り直さない(作り直すと曲が止まる)。
+    // 作り直すのは、閉じられたとき、または再生していない間に止まったままになっているとき
+    if (actx && (actx.state === 'closed' || (!playing && actx.state !== 'running' && (ctxStale || actx.state === 'interrupted')))) {
       var old = actx;
       old.onstatechange = null;
       if (playing) { pausedAbs = absNow(); playing = false; }
       stopSource();
-      try { old.close(); } catch (e) {}
+      try {
+        if (old.state !== 'closed') {
+          var cp = old.close();
+          if (cp && cp.catch) cp.catch(function () {});
+        }
+      } catch (e) {}
       actx = null;
     }
     ctxStale = false;
@@ -485,12 +494,8 @@
       gainNode.connect(actx.destination);
       var ctx = actx;
       ctx.onstatechange = function () {
-        if (ctx === actx && ctx.state !== 'running' && playing) {
-          pausedAbs = absNow();
-          stopSource();
-          playing = false;
-          markPlaying();
-        }
+        // 止まったからといってすぐ再生を解除せず、まず再開を試みる
+        if (ctx === actx && ctx.state !== 'running' && playing) recoverAudio(0);
       };
     }
     try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
@@ -509,9 +514,49 @@
     }, 1000);
   }
 
+  // 再開できたかを Promise で返す
   function resumeCtx() {
-    var p = actx.resume();
-    if (p && p.catch) p.catch(function () {});
+    try {
+      var p = actx.resume();
+      if (p && p.then) {
+        return p.then(function () { return !!actx && actx.state === 'running'; }, function () { return false; });
+      }
+    } catch (e) {}
+    return Promise.resolve(false);
+  }
+
+  // 再生中に AudioContext が止まったとき: 再開を試みる。
+  // 再開できれば、止まっていた時計が動き出し、曲は続きから流れる。
+  // 画面を見ている状態でも再開できなければ、再生を止めた表示にする(もう一度押せば鳴る)
+  var recoverTimer = null;
+  function giveUpPlayback() {
+    if (!playing) return;
+    pausedAbs = absNow();
+    stopSource();
+    playing = false;
+    markPlaying();
+  }
+  function recoverAudio(tries) {
+    clearTimeout(recoverTimer);
+    if (!playing || !actx || actx.state === 'running') return;
+    var ctx = actx;
+    if (ctx.state === 'closed') { giveUpPlayback(); return; }
+    resumeCtx();
+    recoverTimer = setTimeout(function () {
+      if (ctx !== actx || !playing || ctx.state === 'running') return;
+      if (document.hidden && tries < 40) recoverAudio(tries + 1);   // 裏にいる間は再試行を続ける
+      else if (!document.hidden) giveUpPlayback();
+    }, 1500);
+  }
+  // 裏から戻ったときの復旧
+  function onForeground() {
+    if (document.hidden) return;
+    if (keeper && keeperWant && keeper.paused) {
+      var kp = keeper.play();
+      if (kp && kp.catch) kp.catch(function () {});
+    }
+    if (playing) recoverAudio(0);
+    updateMediaState();
   }
 
   function getBuffer(file) {
@@ -673,20 +718,24 @@
     updateMediaState();
   }
 
+  // 画面を消したりブラウザを離れても再生を続けるために、裏で流しておく無音の音声を実行時に作る。
+  // 完全な無音・短すぎる音声は「再生中のメディア」と見なされないことがあるため、
+  // 30秒の長さで、人には聞こえない大きさ(約 -60dB)の 20Hz の音を入れている(ちょうど600周期なので継ぎ目なくループする)
   var silenceSrc = null;
   function silenceUrl() {
     if (silenceSrc) return silenceSrc;
-    var rate = 8000, n = rate, buf = new Uint8Array(44 + n), dv = new DataView(buf.buffer);
-    function w(o, s) { for (var i = 0; i < s.length; i++) buf[o + i] = s.charCodeAt(i); }
-    w(0, 'RIFF'); dv.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt ');
+    var rate = 8000, secs = 30, n = rate * secs, bytes = n * 2;
+    var buf = new Uint8Array(44 + bytes), dv = new DataView(buf.buffer);
+    function w(o, str) { for (var i = 0; i < str.length; i++) buf[o + i] = str.charCodeAt(i); }
+    w(0, 'RIFF'); dv.setUint32(4, 36 + bytes, true); w(8, 'WAVE'); w(12, 'fmt ');
     dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
-    dv.setUint32(24, rate, true); dv.setUint32(28, rate, true); dv.setUint16(32, 1, true);
-    dv.setUint16(34, 8, true); w(36, 'data'); dv.setUint32(40, n, true);
-    buf.fill(128, 44);
+    dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true);
+    dv.setUint16(34, 16, true); w(36, 'data'); dv.setUint32(40, bytes, true);
+    for (var i = 0; i < n; i++) dv.setInt16(44 + i * 2, Math.round(Math.sin(2 * Math.PI * 20 * i / rate) * 33), true);
     silenceSrc = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
     return silenceSrc;
   }
-  var keeper = null, keeperWant = false;
+  var keeper = null, keeperWant = false, keeperRetry = null;
   function keepAlive(on) {
     if (!MS) return;
     keeperWant = on;
@@ -696,11 +745,24 @@
         keeper.loop = true;
         keeper.addEventListener('pause', function () {
           if (!keeperWant || !playing) return;
-          pausedAbs = absNow();
-          stopSource();
-          playing = false;
-          markPlaying();
-          sleepCtx();
+          if (!document.hidden) {
+            // 画面を見ている間の停止(イヤホンを抜いた等)は、曲も止める
+            pausedAbs = absNow();
+            stopSource();
+            playing = false;
+            markPlaying();
+            sleepCtx();
+            return;
+          }
+          // 裏にいる間に無音が止められても、曲は止めずに、無音の再開を試みる
+          // (通知やロック画面からの一時停止は、MediaSession の pause で処理される)
+          clearTimeout(keeperRetry);
+          keeperRetry = setTimeout(function () {
+            if (keeperWant && playing && keeper.paused) {
+              var p = keeper.play();
+              if (p && p.catch) p.catch(function () {});
+            }
+          }, 300);
         });
       }
       if (keeper.paused) {
@@ -727,7 +789,7 @@
         title: label(t),
         artist: app,
         album: queueName,
-        artwork: [{ src: new URL('images/default.png', location.href).href, sizes: '512x512', type: 'image/png' }]
+        artwork: [{ src: new URL(ARTWORK_URL, location.href).href, type: 'image/png' }]
       });
     } catch (e) {}
   }
@@ -1185,7 +1247,10 @@
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) ctxStale = true;
+    else onForeground();
   });
+  window.addEventListener('pageshow', onForeground);
+  window.addEventListener('focus', onForeground);
 
   document.addEventListener('keydown', function (e) {
     if (e.code !== 'Space' || /^(INPUT|TEXTAREA|BUTTON|A)$/.test(e.target.tagName)) return;
