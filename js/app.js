@@ -27,16 +27,10 @@
   var PL_KEY = 'bcMusicPlaylist';
   var VOL_KEY = 'bcMusicVolume';
   var SAVED_KEY = 'bcMusicSavedPlaylists';
-  // 曲のデータはすべてこの1ファイル(サイトのルートに置く)にまとめています
   var TRACKS_JSON = 'tracks.json';
-  // 音声ファイルの置き場所(vercel.json の /api/music/ → GitHub の music/ フォルダ)。
-  // tracks.json の mp3 / ogg / file / dl は、ここからの相対パスで書きます(例: mp3/000.mp3)。
-  // 「/」や「http」で始まるパスは、そのまま使います
   var MUSIC_BASE = '/api/music/';
   var BC_FMTS = ['mp3', 'ogg'];
-  // ロック画面・通知に出るジャケット画像(正方形のPNGがおすすめ)
-  var ARTWORK_URL = 'images/preview.png';
-  // 大戦争の分類名(tracks.json の bc の cat)の表示名と並び順
+  var ARTWORK_URL = 'images/default.png';
   var BC_CATS = {
     bgm: [
       ['regular', '恒常BGM'], ['limited', '限定BGM'], ['shometsu', '消滅都市コラボ'], ['pawapuro', 'パワプロコラボ'],
@@ -264,7 +258,6 @@
       return (bcCat === 'all' || t.cat === bcCat) && (!q || t.title.toLowerCase().indexOf(q) !== -1);
     });
   }
-  // 分類(cat)がある曲があれば、絞り込みメニューを自動で出す
   function renderBcCats() {
     var sel = $('bc-cat'), items = bcOfView(), counts = {}, found = [];
     items.forEach(function (t) {
@@ -365,7 +358,7 @@
       .map(function (id) { return { id: id, loop: 1 }; });
   }
   var byNum = {};
-  var byPn = {};   // 元サイトの共有リンク(?p=)で使われていた曲番号 → 曲ID
+  var byPn = {}; 
   function pushVarint(bytes, n) {
     while (n >= 0x80) { bytes.push((n & 0x7f) | 0x80); n = Math.floor(n / 0x80); }
     bytes.push(n);
@@ -470,8 +463,6 @@
 
   function ensureCtx() {
     clearTimeout(sleepTimer);
-    // 再生中の AudioContext は作り直さない(作り直すと曲が止まる)。
-    // 作り直すのは、閉じられたとき、または再生していない間に止まったままになっているとき
     if (actx && (actx.state === 'closed' || (!playing && actx.state !== 'running' && (ctxStale || actx.state === 'interrupted')))) {
       var old = actx;
       old.onstatechange = null;
@@ -494,7 +485,6 @@
       gainNode.connect(actx.destination);
       var ctx = actx;
       ctx.onstatechange = function () {
-        // 止まったからといってすぐ再生を解除せず、まず再開を試みる
         if (ctx === actx && ctx.state !== 'running' && playing) recoverAudio(0);
       };
     }
@@ -514,7 +504,6 @@
     }, 1000);
   }
 
-  // 再開できたかを Promise で返す
   function resumeCtx() {
     try {
       var p = actx.resume();
@@ -525,9 +514,6 @@
     return Promise.resolve(false);
   }
 
-  // 再生中に AudioContext が止まったとき: 再開を試みる。
-  // 再開できれば、止まっていた時計が動き出し、曲は続きから流れる。
-  // 画面を見ている状態でも再開できなければ、再生を止めた表示にする(もう一度押せば鳴る)
   var recoverTimer = null;
   function giveUpPlayback() {
     if (!playing) return;
@@ -544,11 +530,10 @@
     resumeCtx();
     recoverTimer = setTimeout(function () {
       if (ctx !== actx || !playing || ctx.state === 'running') return;
-      if (document.hidden && tries < 40) recoverAudio(tries + 1);   // 裏にいる間は再試行を続ける
+      if (document.hidden && tries < 40) recoverAudio(tries + 1);
       else if (!document.hidden) giveUpPlayback();
     }, 1500);
   }
-  // 裏から戻ったときの復旧
   function onForeground() {
     if (document.hidden) return;
     if (keeper && keeperWant && keeper.paused) {
@@ -718,9 +703,6 @@
     updateMediaState();
   }
 
-  // 画面を消したりブラウザを離れても再生を続けるために、裏で流しておく無音の音声を実行時に作る。
-  // 完全な無音・短すぎる音声は「再生中のメディア」と見なされないことがあるため、
-  // 30秒の長さで、人には聞こえない大きさ(約 -60dB)の 20Hz の音を入れている(ちょうど600周期なので継ぎ目なくループする)
   var silenceSrc = null;
   function silenceUrl() {
     if (silenceSrc) return silenceSrc;
@@ -746,7 +728,6 @@
         keeper.addEventListener('pause', function () {
           if (!keeperWant || !playing) return;
           if (!document.hidden) {
-            // 画面を見ている間の停止(イヤホンを抜いた等)は、曲も止める
             pausedAbs = absNow();
             stopSource();
             playing = false;
@@ -754,8 +735,6 @@
             sleepCtx();
             return;
           }
-          // 裏にいる間に無音が止められても、曲は止めずに、無音の再開を試みる
-          // (通知やロック画面からの一時停止は、MediaSession の pause で処理される)
           clearTimeout(keeperRetry);
           keeperRetry = setTimeout(function () {
             if (keeperWant && playing && keeper.paused) {
@@ -1259,8 +1238,7 @@
     togglePlay();
   });
 
-  // ===== 名前を付けて保存するプレイリスト =====
-  var fileMap = {};     // 曲ファイルのパス -> 曲ID (旧サイトの保存データの引き継ぎ用)
+  var fileMap = {};
 
   function entriesFromLegacy(tracksArr) {
     return (tracksArr || []).map(function (x) {
@@ -1335,7 +1313,6 @@
     toast('「' + name + '」として保存しました');
   });
 
-  // ===== データ読み込み =====
   function loadJson(url) {
     return fetch(url).then(function (r) {
       if (!r.ok) throw new Error(url + ' : HTTP ' + r.status);
@@ -1344,19 +1321,15 @@
   }
   function dataOf(res) { return res && !res.__error ? res : null; }
 
-  // 曲ファイルのパス: 「/」「http」で始まるものはそのまま、それ以外は MUSIC_BASE からの相対パス
   function resolveFile(p) {
     return /^(\/|https?:)/.test(p) ? p : MUSIC_BASE + p;
   }
-  // OGG の曲番号は、MP3 の番号に 1000 を足したもの (例: 5 → 1005、34_0 → 1034_0)
+
   function oggNum(n) {
     if (typeof n === 'number') return n + 1000;
     return String(n).replace(/^\d+/, function (d) { return String(1000 + Number(d)); });
   }
 
-  // にゃんこ大戦争: tracks.json の bc。1曲に mp3 / ogg のファイルを書くと、それぞれ別の曲として並びます
-  //   { "n": 0, "title": "…", "ver": "1.0", "kind": "bgm", "cat": "regular", "dur": 127.4,
-  //     "mp3": "mp3/000.mp3", "ogg": "ogg/000.ogg" }
   function addBc(list) {
     (list || []).forEach(function (s) {
       BC_FMTS.forEach(function (fmt) {
@@ -1375,7 +1348,6 @@
     });
   }
 
-  // にゃんこ村など: tracks.json の bgm / se / other
   function addNyanko(data) {
     var seq = 0;
     function prep(t, type) {
@@ -1384,7 +1356,7 @@
       if (t.dl) t.dl = resolveFile(t.dl);
       // 共有URL用の番号。大戦争の番号(0〜)とぶつからないよう 100000 以降を使う
       var orig = typeof t.n === 'number' ? t.n : seq;
-      byPn[orig] = t.id;   // 元サイトの ?p= リンクの番号
+      byPn[orig] = t.id; 
       var want = 100000 + orig;
       while (byNum[want]) want++;
       t.n = want;
@@ -1420,7 +1392,6 @@
     if (!data) throw res.__error || new Error(TRACKS_JSON + ' がありません');
     addBc(data.bc);
     addNyanko(data);
-    // 元サイトの ?p= リンクの、大戦争の曲の番号 (bc_start から bc_order の順に並んでいた)
     var lp = data.legacy_p || {};
     (lp.bc_order || []).forEach(function (n, i) {
       if (byNum[String(n)]) byPn[(lp.bc_start || 0) + i] = byNum[String(n)];
@@ -1430,7 +1401,7 @@
     var firstRun = false;
     try { firstRun = localStorage.getItem(PL_KEY) === null; } catch (e) {}
     playlist = loadPlaylist();
-    if (firstRun) {   // 旧サイトのプレイリストを引き継ぐ
+    if (firstRun) {
       try {
         var old = JSON.parse(localStorage.getItem('playlist') || 'null');
         if (Array.isArray(old)) { playlist = entriesFromLegacy(old); savePlaylist(); }
